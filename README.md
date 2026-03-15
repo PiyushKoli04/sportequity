@@ -31,10 +31,10 @@ open http://localhost:5000/login
 
 | Role | Email | Password |
 |------|-------|----------|
-| Athlete | athlete@sportequity.com | password123 |
-| Trainer | trainer@sportequity.com | password123 |
-| Doctor | doctor@sportequity.com | password123 |
-| Admin | admin@sportequity.com | password123 |
+| Athlete | piyushkoli2605@gmail.com | 123456 |
+| Trainer | trainer1@sport.com | 123456 |
+| Doctor | doctor1@sport.com | 123456 |
+| Admin | admin@sport.com | 123456 |
 
 ---
 
