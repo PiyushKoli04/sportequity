@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Admin Statistics - SportEquity{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <h1><i class="bi bi-bar-chart-line"></i> Region Statistics</h1>
+      <p class="text-muted">{{ admin.full_name }} · {{ admin_region or 'All Regions' }}</p>
+    </div>
+    <div class="col-md-4 text-end">
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+    </div>
+  </div>
+
+  <!-- Top Stats -->
+  <div class="row mb-4">
+    {% for label,val,color in [
+      ('Total Athletes',total_athletes,'primary'),
+      ('Verified',verified_athletes,'success'),
+      ('Pending',pending_athletes,'warning'),
+      ('Avg SportScore',avg_sport_score,'info')
+    ] %}
+    <div class="col-md-3">
+      <div class="card border-{{ color }}">
+        <div class="card-body text-center">
+          <h2 class="text-{{ color }}">{{ val }}</h2>
+          <p class="mb-0">{{ label }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Activity Stats -->
+  <div class="row mb-4">
+    {% for label,val,icon in [
+      ('Training Sessions',total_training_logs,'bi-activity'),
+      ('Health Records',total_health_records,'bi-heart-pulse'),
+      ('Diet Logs',total_diet_logs,'bi-cup-hot')
+    ] %}
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-body text-center">
+          <i class="bi {{ icon }} fs-1 text-primary"></i>
+          <h3 class="mt-2">{{ val }}</h3>
+          <p class="text-muted mb-0">{{ label }}</p>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Sports Breakdown -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="bi bi-pie-chart"></i> Sports Distribution</h5></div>
+        <div class="card-body">
+          {% if sports_breakdown %}
+            {% for sport, count in sports_breakdown.items() %}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span><span class="badge bg-info me-2">{{ sport }}</span></span>
+              <div class="d-flex align-items-center gap-2">
+                <div class="progress flex-grow-1" style="width:120px; height:8px">
+                  <div class="progress-bar bg-info" style="width:{{ (count/total_athletes*100)|round }}%"></div>
+                </div>
+                <strong>{{ count }}</strong>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No sport data yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="bi bi-graph-up"></i> Overview Chart</h5></div>
+        <div class="card-body">
+          <canvas id="statsChart" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Athlete Details -->
+  <div class="card">
+    <div class="card-header bg-dark text-white"><h5 class="mb-0"><i class="bi bi-table"></i> Athlete Activity Details</h5></div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr><th>Athlete</th><th>Sport</th><th>Region</th><th>SportScore</th><th>Training</th><th>Health</th><th>Diet</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% if athletes %}{% for row in athletes %}
+            <tr>
+              <td><strong>{{ row.athlete.name }}</strong></td>
+              <td><span class="badge bg-info">{{ row.athlete.sport or '—' }}</span></td>
+              <td>{{ row.athlete.region or '—' }}</td>
+              <td>
+                <span class="badge {% if row.sport_score >= 70 %}bg-success{% elif row.sport_score >= 40 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                  {{ row.sport_score }}
+                </span>
+              </td>
+              <td>{{ row.training_sessions }}</td>
+              <td>{{ row.health_records }}</td>
+              <td>{{ row.diet_logs }}</td>
+              <td>{% if row.athlete.verified %}<span class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+            </tr>
+            {% endfor %}{% else %}
+            <tr><td colspan="8" class="text-center text-muted py-4">No athlete data</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+const ctx = document.getElementById('statsChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Athletes','Training','Health','Diet'],
+    datasets: [{
+      label: 'Count',
+      data: [{{ total_athletes }}, {{ total_training_logs }}, {{ total_health_records }}, {{ total_diet_logs }}],
+      backgroundColor: ['#0d6efd','#198754','#dc3545','#ffc107'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}
+{% endblock %}

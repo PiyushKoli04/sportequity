@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Log Training - SportEquity{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7">
+      <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0"><i class="bi bi-activity"></i> Log Training Session</h4>
+          <small>{{ athlete.name }}</small>
+        </div>
+        <div class="card-body p-4">
+          <form method="POST">
+            <div class="mb-3">
+              <label class="form-label">Training Date *</label>
+              <input type="date" class="form-control" name="date" value="{{ now }}" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Workout Type *</label>
+              <select class="form-select" name="workout_type" required>
+                <option value="">Select type</option>
+                <option>Cardio</option>
+                <option>Strength Training</option>
+                <option>Flexibility / Stretching</option>
+                <option>Sport Practice</option>
+                <option>Sprint / Speed Work</option>
+                <option>Agility Drills</option>
+                <option>Competition</option>
+                <option>Recovery / Cool Down</option>
+              </select>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Duration (minutes) *</label>
+                <input type="number" class="form-control" name="duration" min="1" max="480" placeholder="e.g. 60" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Intensity (0–100)</label>
+                <div class="d-flex gap-2 align-items-center mt-2">
+                  <input type="range" class="form-range" id="intensityRange" name="intensity" min="0" max="100" value="50">
+                  <span id="intensityValue" class="badge bg-success" style="min-width:40px;font-size:1rem">50</span>
+                </div>
+                <small class="text-muted">0 = very light · 100 = maximum effort</small>
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" name="notes" rows="3" placeholder="How did the session feel? Any observations?"></textarea>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+              <a href="{{ url_for('athlete_dashboard') }}" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Log Session</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

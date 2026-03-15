@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}SportEquity - AI-Powered Sports Inclusion Platform{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-4 mb-4">
+                <i class="bi bi-trophy text-primary"></i> SportEquity
+            </h1>
+            <h3 class="text-muted mb-4">AI-Powered Sports Inclusion Platform</h3>
+            <p class="lead mb-4">
+                Connect with athletes, trainers, doctors, and your community. Track your progress, achieve your athletic goals, and get equal access to sports resources.
+            </p>
+
+            <div class="row g-3 mb-4">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-person-check" style="font-size: 32px; color: #0d6efd;"></i>
+                            <h6 class="mt-2">For Athletes</h6>
+                            <small class="text-muted">Build profiles, track performance</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-person-gear" style="font-size: 32px; color: #0d6efd;"></i>
+                            <h6 class="mt-2">For Trainers</h6>
+                            <small class="text-muted">Manage & guide athletes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-hospital" style="font-size: 32px; color: #0d6efd;"></i>
+                            <h6 class="mt-2">For Doctors</h6>
+                            <small class="text-muted">Monitor health & safety</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <i class="bi bi-shield-check" style="font-size: 32px; color: #0d6efd;"></i>
+                            <h6 class="mt-2">For Communities</h6>
+                            <small class="text-muted">Admin rural sports</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex">
+                <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{{ url_for('register') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-person-plus"></i> Register
+                </a>
+            </div>
+
+            <p class="mt-4">
+                <a href="/seed-demo-data" class="text-decoration-none">👉 Load Demo Data (for testing)</a>
+            </p>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                <div class="card-body text-white p-5">
+                    <h4 class="mb-4">🌟 Key Features</h4>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <strong><i class="bi bi-graph-up"></i> Performance Analytics</strong><br>
+                            <small>Track training, health, and diet metrics with AI-powered insights</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-qr-code"></i> Digital ID Card</strong><br>
+                            <small>Generate QR code ID cards for easy profile sharing</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-chat-dots"></i> AI Chatbot</strong><br>
+                            <small>Get instant advice on training, diet, and injury prevention</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-trophy"></i> Tournament Finder</strong><br>
+                            <small>Discover and register for sports tournaments in your region</small>
+                        </li>
+                        <li class="mb-3">
+                            <strong><i class="bi bi-calendar-event"></i> Appointment System</strong><br>
+                            <small>Book consultations with trainers and doctors</small>
+                        </li>
+                        <li>
+                            <strong><i class="bi bi-shield-check"></i> Inclusive Access</strong><br>
+                            <small>Community admins can manage profiles for rural athletes</small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Stats Section -->
+    <div class="row text-center mb-5">
+        <div class="col-md-3">
+            <h3 class="text-primary">1M+</h3>
+            <p>Active Athletes</p>
+        </div>
+        <div class="col-md-3">
+            <h3 class="text-primary">50K+</h3>
+            <p>Trainers & Coaches</p>
+        </div>
+        <div class="col-md-3">
+            <h3 class="text-primary">100+</h3>
+            <p>Countries Supported</p>
+        </div>
+        <div class="col-md-3">
+            <h3 class="text-primary">500K+</h3>
+            <p>Tournaments</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

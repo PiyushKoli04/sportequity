@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block title %}Tournaments - SportEquity{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="bi bi-trophy"></i> Sports Tournaments</h1>
+            <p class="text-muted">Find and participate in upcoming tournaments in your region</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3 class="text-primary">{{ tournaments|length }}</h3>
+                    <p class="mb-0"><strong>Available Tournaments</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Search Tournament</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by name...">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Sport</label>
+                            <select class="form-select" id="sportFilter">
+                                <option value="">All Sports</option>
+                                <option value="Football">Football</option>
+                                <option value="Basketball">Basketball</option>
+                                <option value="Tennis">Tennis</option>
+                                <option value="Athletics">Athletics</option>
+                                <option value="Cricket">Cricket</option>
+                                <option value="Badminton">Badminton</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" onclick="filterTournaments()">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tournaments Grid -->
+    <div class="row g-4">
+        {% if tournaments %}
+            {% for tournament in tournaments %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm h-100 tournament-card">
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <span class="badge bg-primary">{{ tournament.sport }}</span>
+                            <span class="badge bg-info">{{ tournament.location }}</span>
+                        </div>
+                        
+                        <h5 class="card-title">{{ tournament.name }}</h5>
+                        <p class="card-text text-muted">{{ tournament.description[:100] }}{% if tournament.description|length > 100 %}...{% endif %}</p>
+
+                        <div class="mt-3 mb-3">
+                            <p class="mb-1">
+                                <strong><i class="bi bi-calendar"></i> Start:</strong> 
+                                <span class="text-primary">{{ tournament.start_date }}</span>
+                            </p>
+                            <p class="mb-0">
+                                <strong><i class="bi bi-calendar"></i> End:</strong> 
+                                <span class="text-primary">{{ tournament.end_date }}</span>
+                            </p>
+                        </div>
+
+                        <div class="alert alert-info mb-3">
+                            <small><strong>{{ tournament.participants|length }}</strong> athletes registered</small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#tournamentModal" onclick="viewTournamentDetails('{{ tournament._id }}', '{{ tournament.name }}', '{{ tournament.description }}')">
+                            <i class="bi bi-eye"></i> View Details & Register
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-warning text-center py-5">
+                    <i class="bi bi-info-circle" style="font-size: 48px;"></i>
+                    <p class="mt-3">No tournaments available yet. Check back soon!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tournament Details Modal -->
+<div class="modal fade" id="tournamentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tournamentTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tournamentDetails"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="registerTournament()">
+                    <i class="bi bi-check-circle"></i> Register Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterTournaments() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const sportValue = document.getElementById('sportFilter').value;
+        
+        document.querySelectorAll('.tournament-card').forEach(card => {
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const sport = card.querySelector('.badge').textContent;
+            
+            const matchSearch = title.includes(searchValue);
+            const matchSport = !sportValue || sport === sportValue;
+            
+            card.parentElement.style.display = (matchSearch && matchSport) ? 'block' : 'none';
+        });
+    }
+
+    function viewTournamentDetails(id, name, description) {
+        document.getElementById('tournamentTitle').textContent = name;
+        document.getElementById('tournamentDetails').innerHTML = `
+            <p><strong>Description:</strong></p>
+            <p>${description}</p>
+            <p><strong>Preparing to register?</strong></p>
+            <ul>
+                <li>Make sure your profile is complete</li>
+                <li>Your health records are up to date</li>
+                <li>You have the required certifications</li>
+            </ul>
+        `;
+    }
+
+    function registerTournament() {
+        alert('Registration feature coming soon! In the meantime, contact tournament organizers directly.');
+    }
+
+    // Filter on input change
+    document.getElementById('searchInput').addEventListener('input', filterTournaments);
+    document.getElementById('sportFilter').addEventListener('change', filterTournaments);
+</script>
+
+<style>
+    .tournament-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .tournament-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+</style>
+{% endblock %}

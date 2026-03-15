@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Register - SportEquity{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-lg">
+        <div class="card-body p-5">
+          <h2 class="text-center mb-4"><i class="bi bi-person-plus text-primary"></i> Create Account</h2>
+
+          {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+
+          <form method="POST">
+            <div class="mb-3">
+              <label class="form-label">Full Name *</label>
+              <input type="text" class="form-control" name="full_name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address *</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password *</label>
+              <input type="password" class="form-control" name="password" required minlength="6">
+              <small class="text-muted">Minimum 6 characters</small>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">I am a... *</label>
+              <select class="form-select" name="role" id="roleSelect" required onchange="toggleFields()">
+                <option value="athlete">Athlete</option>
+                <option value="trainer">Trainer</option>
+                <option value="doctor">Doctor</option>
+                <option value="admin">Community Admin</option>
+              </select>
+            </div>
+
+            <!-- Region (required for admin, optional for others) -->
+            <div class="mb-3" id="regionField">
+              <label class="form-label">Region / City <span id="regionRequired" class="text-danger" style="display:none">*</span></label>
+              <input type="text" class="form-control" name="region" id="regionInput" placeholder="e.g., Mumbai, Delhi, Rural Maharashtra">
+              <small class="text-muted" id="regionHint">Where you are based</small>
+            </div>
+
+            <!-- Specialization (for trainers and doctors) -->
+            <div class="mb-4" id="specField" style="display:none">
+              <label class="form-label">Specialization</label>
+              <input type="text" class="form-control" name="specialization" id="specInput"
+                     placeholder="e.g., Sports Medicine, Sprint Training, Physiotherapy">
+              <small class="text-muted">Your area of expertise</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2">Create Account</button>
+          </form>
+
+          <hr class="my-4">
+          <p class="text-center text-muted">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+
+          <div class="alert alert-info mt-3 mb-0">
+            <small><strong>Demo accounts:</strong><br>
+            athlete@sportequity.com / password123<br>
+            trainer@sportequity.com / password123<br>
+            doctor@sportequity.com / password123<br>
+            admin@sportequity.com / password123
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleFields() {
+  const role = document.getElementById('roleSelect').value;
+  const specField   = document.getElementById('specField');
+  const regionReq   = document.getElementById('regionRequired');
+  const regionInput = document.getElementById('regionInput');
+  const regionHint  = document.getElementById('regionHint');
+
+  // Specialization shown for trainer/doctor
+  specField.style.display = (role === 'trainer' || role === 'doctor') ? '' : 'none';
+
+  // Region required for admin
+  if (role === 'admin') {
+    regionReq.style.display = '';
+    regionInput.required    = true;
+    regionHint.textContent  = 'Required: the region you manage';
+  } else {
+    regionReq.style.display = 'none';
+    regionInput.required    = false;
+    regionHint.textContent  = 'Where you are based';
+  }
+}
+</script>
+{% endblock %}

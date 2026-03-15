@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}AI Chatbot - SportEquity{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-gradient text-white" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="mb-0"><i class="bi bi-chat-dots"></i> SportEquity AI Assistant</h4>
+                </div>
+                <div class="card-body" style="height: 600px; overflow-y: auto; background: #f8f9fa;">
+                    <div id="chatMessages" style="display: flex; flex-direction: column;">
+                        <div class="mb-3">
+                            <div class="alert alert-info">
+                                <strong>👋 Welcome!</strong> I'm your SportEquity AI assistant. Ask me about training, diet, injury prevention, and more!
+                            </div>
+                        </div>
+
+                        {% if chat_history %}
+                            {% for chat in chat_history|reverse %}
+                            <!-- User Message -->
+                            <div class="mb-3 text-end">
+                                <div class="d-inline-block" style="background: #667eea; color: white; padding: 10px 15px; border-radius: 15px; max-width: 75%;">
+                                    {{ chat.question }}
+                                </div>
+                                <small class="d-block text-muted mt-1">{{ chat.created_at[:19] }}</small>
+                            </div>
+
+                            <!-- Bot Message -->
+                            <div class="mb-3">
+                                <div class="d-inline-block" style="background: white; border: 1px solid #ddd; padding: 10px 15px; border-radius: 15px; max-width: 75%;">
+                                    <strong class="text-primary">Bot:</strong>
+                                    <p class="mb-0 mt-2">{{ chat.response }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="chatInput" placeholder="Ask me about training, diet, injuries, sleep, strength, endurance...">
+                        <button class="btn btn-primary" type="button" id="sendBtn" onclick="sendMessage()">
+                            <i class="bi bi-send"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggested Questions -->
+            <div class="mt-4">
+                <h6 class="text-muted mb-3">Quick Questions:</h6>
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-primary w-100 text-start" onclick="sendQuickQuestion('What are some good training tips?')">
+                            <i class="bi bi-lightning"></i> Training Tips
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-primary w-100 text-start" onclick="sendQuickQuestion('How should I manage my diet for athletics?')">
+                            <i class="bi bi-cup-hot"></i> Diet Advice
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-primary w-100 text-start" onclick="sendQuickQuestion('How can I prevent injuries?')">
+                            <i class="bi bi-shield-check"></i> Injury Prevention
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-primary w-100 text-start" onclick="sendQuickQuestion('How important is sleep for athletes?')">
+                            <i class="bi bi-moon-stars"></i> Sleep Importance
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const question = input.value.trim();
+        
+        if (!question) return;
+        
+        // Add user message to chat
+        const chatMessages = document.getElementById('chatMessages');
+        const userDiv = document.createElement('div');
+        userDiv.className = 'mb-3 text-end';
+        userDiv.innerHTML = `
+            <div style="background: #667eea; color: white; padding: 10px 15px; border-radius: 15px; display: inline-block; max-width: 75%;">
+                ${question}
+            </div>
+        `;
+        chatMessages.appendChild(userDiv);
+        
+        input.value = '';
+        
+        // Get bot response
+        try {
+            const response = await fetch('{{ url_for("chatbot") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: question })
+            });
+            
+            const data = await response.json();
+            
+            // Add bot message
+            const botDiv = document.createElement('div');
+            botDiv.className = 'mb-3';
+            botDiv.innerHTML = `
+                <div style="background: white; border: 1px solid #ddd; padding: 10px 15px; border-radius: 15px; display: inline-block; max-width: 75%;">
+                    <strong class="text-primary">Bot:</strong>
+                    <p class="mb-0 mt-2">${data.response}</p>
+                </div>
+            `;
+            chatMessages.appendChild(botDiv);
+            
+            // Scroll to bottom
+            chatMessages.parentElement.scrollTop = chatMessages.parentElement.scrollHeight;
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error sending message');
+        }
+    }
+
+    function sendQuickQuestion(question) {
+        document.getElementById('chatInput').value = question;
+        sendMessage();
+    }
+
+    // Send on Enter key
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+</script>
+{% endblock %}

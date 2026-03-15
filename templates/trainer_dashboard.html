@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Trainer Dashboard - SportEquity{% endblock %}
+{% block content %}
+<div class="container-fluid mt-4">
+  <div class="row mb-4">
+    <div class="col-md-8"><h1><i class="bi bi-person-gear"></i> Trainer Dashboard</h1><p class="text-muted">{{ trainer.full_name }} · {{ trainer.specialization or 'Athletic Trainer' }}</p></div>
+    <div class="col-md-4 text-end"><span class="badge bg-primary fs-6">{{ trainer.full_name }}</span></div>
+  </div>
+
+  <div class="row mb-4">
+    {% for label,val,color in [('Athletes',athletes|length,'primary'),('Total Sessions',total_sessions,'info'),('My Appointments',appointments|length,'success'),('Pending',appointments|selectattr('status','equalto','pending')|list|length,'warning')] %}
+    <div class="col-md-3"><div class="card border-{{ color }}"><div class="card-body text-center"><h2 class="text-{{ color }}">{{ val }}</h2><p class="mb-0">{{ label }}</p></div></div></div>
+    {% endfor %}
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12 d-flex gap-2 flex-wrap">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTournamentModal"><i class="bi bi-trophy"></i> Create Tournament</button>
+      <a href="{{ url_for('tournaments') }}" class="btn btn-outline-secondary"><i class="bi bi-search"></i> Browse Tournaments</a>
+    </div>
+  </div>
+
+  <!-- My Appointments -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white"><h5 class="mb-0"><i class="bi bi-calendar-check"></i> My Appointments</h5></div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light"><tr><th>Athlete</th><th>Type</th><th>Date</th><th>Time</th><th>Status</th><th>Notes</th></tr></thead>
+          <tbody>
+            {% if appointments %}
+              {% for a in appointments %}
+              <tr>
+                <td><strong>{{ a.athlete_name }}</strong></td>
+                <td><span class="badge bg-info">{{ a.type }}</span></td>
+                <td>{{ a.appointment_date }}</td>
+                <td>{{ a.time or '—' }}</td>
+                <td><span class="badge {% if a.status=='confirmed' %}bg-success{% elif a.status=='pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ a.status|capitalize }}</span></td>
+                <td><small>{{ a.notes or '—' }}</small></td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td colspan="6" class="text-center text-muted py-4">No appointments assigned to you yet. Athletes can book by selecting you in the appointment form.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Athletes List -->
+  <div class="card">
+    <div class="card-header bg-primary text-white"><h5 class="mb-0"><i class="bi bi-people"></i> Athletes</h5></div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light"><tr><th>Name</th><th>Sport</th><th>Region</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            {% if athletes %}{% for a in athletes[:20] %}
+            <tr>
+              <td><strong>{{ a.name }}</strong></td>
+              <td><span class="badge bg-info">{{ a.sport or '—' }}</span></td>
+              <td>{{ a.region or '—' }}</td>
+              <td>{% if a.verified %}<span class="badge bg-success">Verified</span>{% else %}<span class="badge bg-warning text-dark">Pending</span>{% endif %}</td>
+              <td><a href="{{ url_for('public_athlete_profile', athlete_id=a._id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> View</a></td>
+            </tr>
+            {% endfor %}{% else %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No athletes found</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create Tournament Modal -->
+<div class="modal fade" id="createTournamentModal" tabindex="-1">
+  <div class="modal-dialog modal-lg"><div class="modal-content">
+    <div class="modal-header bg-primary text-white">
+      <h5 class="modal-title"><i class="bi bi-trophy"></i> Create Tournament</h5>
+      <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+    </div>
+    <form method="POST" action="{{ url_for('trainer_create_tournament') }}">
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12"><label class="form-label">Tournament Name *</label><input type="text" name="name" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Sport *</label><input type="text" name="sport" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Location *</label><input type="text" name="location" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">Start Date *</label><input type="date" name="start_date" class="form-control" required></div>
+          <div class="col-md-6"><label class="form-label">End Date *</label><input type="date" name="end_date" class="form-control" required></div>
+          <div class="col-12"><label class="form-label">Description</label><textarea name="description" class="form-control" rows="3"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Create Tournament</button></div>
+    </form>
+  </div></div>
+</div>
+{% endblock %}
