@@ -5,4 +5,4 @@ python-dotenv==1.0.0
 qrcode[pil]==7.4.2
 Pillow==10.2.0
 # Optional: uncomment for Groq AI chatbot
-# groq==0.4.2
+groq==0.4.2
