@@ -5,3 +5,4 @@ python-dotenv==1.0.0
 qrcode
 # Optional: uncomment for Groq AI chatbot
 groq
+pillow
